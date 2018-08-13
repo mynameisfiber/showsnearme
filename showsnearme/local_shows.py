@@ -39,6 +39,11 @@ def generate_shows(city='new york', token=None):
             show['starts_at'] = dateutil.parser.parse(show['starts_at'])
         queue.extend(filter(is_new, data))
         if len(queue) >= 100:
+            #  the responses from ohmyrockness are not exactly in chronological
+            #  order. as a result, we fetch 100 at a time, sort them, then only
+            #  use the first 50, and fetch more. This hopefully gives us enough
+            #  of a pool to smooth things out so _this generator_ yields shows
+            #  in chronological order
             queue.sort(key=itemgetter('starts_at'))
             yield from queue[:50]
             queue = queue[50:]
