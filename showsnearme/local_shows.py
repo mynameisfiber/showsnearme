@@ -7,14 +7,20 @@ from operator import itemgetter
 import datetime
 
 
+_CITY_TO_REGION = {
+    'new york': 1,
+    'los angeles': 3,
+    'chicago': 2
+}
+CITIES = list(_CITY_TO_REGION.keys())
 HEADERS = {
     'authorization': 'Token token="3b35f8a73dabd5f14b1cac167a14c1f6'
 }
 URL = ("https://www.ohmyrockness.com/api/shows.json?"
-       "index=true&page={page}&per=100&regioned=1")
+       "index=true&page={page}&per=100&regioned={region}")
 
 
-def generate_shows():
+def generate_shows(city='new york'):
     page = 1
     seen_ids = set()
 
@@ -25,7 +31,7 @@ def generate_shows():
         return not_in
     while True:
         data = requests.get(
-            URL.format(page=page),
+            URL.format(region=_CITY_TO_REGION[city], page=page),
             headers=HEADERS,
         )
         shows = list(filter(is_new, data.json()))
@@ -69,10 +75,11 @@ def haversine(A, B, imperial=False):
 
 
 def query_shows(location=None, n_shows=5, n_start_days=None, n_end_days=None,
-                chunk_days=False, passed_shows=True, imperial=False, **kwargs):
+                chunk_days=False, passed_shows=True, imperial=False, city=None,
+                **kwargs):
     location = location or get_location()
     shows = []
-    for show in generate_shows():
+    for show in generate_shows(city):
         if len(shows) == n_shows:
             break
         venue_location = [float(show['venue'].get(f) or 0.0)

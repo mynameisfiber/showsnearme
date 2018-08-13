@@ -1,10 +1,15 @@
 import argparse
-from showsnearme import (local_shows, display)
+from showsnearme import (local_shows, display, CITIES)
 
 
-parser = argparse.ArgumentParser(description='Find local shows')
-parser.add_argument('--location', type=str,
+parser = argparse.ArgumentParser(
+    description='Find local shows',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
+)
+parser.add_argument('location', type=str, nargs='?',
                     help='location of search (default: geoip location)')
+parser.add_argument('--city', type=str, default=CITIES[0], choices=CITIES,
+                    help='Which ohmyrockness city to look up')
 parser.add_argument('-N, --n-shows', type=int, dest='n_shows',
                     help='Number of total shows to show')
 parser.add_argument('-n, --n-shows-daily', type=int, dest='n_shows_daily',
@@ -24,7 +29,7 @@ parser.add_argument('--show-old', dest='pased_shows', action='store_true',
 parser.add_argument('--hide-url', dest='show_url', action='store_false',
                     help='Whether to hide URLs from output')
 parser.add_argument('--imperial', dest='imperial', action='store_true',
-                    help='Show distances in miles (default: kilometers)')
+                    help='Show distances in miles instead of km')
 
 parser.add_argument('--debug', action='store_true', help='Debug Output')
 
