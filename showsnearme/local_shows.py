@@ -6,8 +6,6 @@ from math import radians, cos, sin, asin, sqrt
 from operator import itemgetter
 import datetime
 
-from .hack import get_authorization_token
-
 
 _CITY_TO_REGION = {
     'new york': 1,
@@ -15,17 +13,11 @@ _CITY_TO_REGION = {
     'chicago': 2
 }
 CITIES = list(_CITY_TO_REGION.keys())
-HEADERS = None  # we lazy load this below since it requires HTTP requests
 URL = ("https://www.ohmyrockness.com/api/shows.json?"
-       "index=true&page={page}&per=100&regioned={region}")
+       "index=true&page={page}&per=50&regioned={region}")
 
 
-def generate_shows(city='new york'):
-    global HEADERS
-    if HEADERS is None:
-        token = get_authorization_token()
-        HEADERS = {'authorization': 'Token token="' + token}
-
+def generate_shows(city='new york', token=None):
     page = 1
     seen_ids = set()
 
@@ -34,16 +26,22 @@ def generate_shows(city='new york'):
         not_in = _id not in seen_ids
         seen_ids.add(_id)
         return not_in
+    queue = []
     while True:
-        data = requests.get(
+        req = requests.get(
             URL.format(region=_CITY_TO_REGION[city], page=page),
-            headers=HEADERS,
+            headers={'authorization': 'Token token="' + token}
         )
-        shows = list(filter(is_new, data.json()))
-        for show in shows:
+        if req.status_code == 401:
+            raise Exception("Expired/Invalid authorization token")
+        data = req.json()
+        for show in data:
             show['starts_at'] = dateutil.parser.parse(show['starts_at'])
-        shows.sort(key=itemgetter('starts_at'))
-        yield from shows
+        queue.extend(filter(is_new, data))
+        if len(queue) >= 100:
+            queue.sort(key=itemgetter('starts_at'))
+            yield from queue[:50]
+            queue = queue[50:]
         page += 1
 
 
@@ -81,10 +79,10 @@ def haversine(A, B, imperial=False):
 
 def query_shows(location=None, n_shows=5, n_start_days=None, n_end_days=None,
                 chunk_days=False, passed_shows=True, imperial=False, city=None,
-                **kwargs):
+                token=None, **kwargs):
     location = location or get_location()
     shows = []
-    for show in generate_shows(city):
+    for show in generate_shows(city=city, token=token):
         if len(shows) == n_shows:
             break
         venue_location = [float(show['venue'].get(f) or 0.0)

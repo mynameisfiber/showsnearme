@@ -1,5 +1,5 @@
 import argparse
-from showsnearme import (local_shows, display, CITIES)
+from showsnearme import (local_shows, display, CITIES, hack)
 
 
 parser = argparse.ArgumentParser(
@@ -22,6 +22,9 @@ parser.add_argument('-B, --start-days', type=int, default=0,
                     dest='n_start_days',
                     help='Number of days from now to start query')
 
+parser.add_argument('--token', type=str,
+                    help='Authorization token for ohmyrockness')
+
 parser.add_argument('--no-chunk-days', dest='chunk_days', action='store_false',
                     help="Don't chunk results into calendar days")
 parser.add_argument('--show-old', dest='pased_shows', action='store_true',
@@ -38,6 +41,7 @@ def main():
     args = parser.parse_args()
 
     args.location = local_shows.get_location(args.location)
+    args.token = args.token or hack.get_authorization_token()
     if not (args.n_shows or args.n_end_days):
         args.n_shows = 5
 
