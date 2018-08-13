@@ -6,6 +6,8 @@ from math import radians, cos, sin, asin, sqrt
 from operator import itemgetter
 import datetime
 
+from .hack import get_authorization_token
+
 
 _CITY_TO_REGION = {
     'new york': 1,
@@ -13,14 +15,17 @@ _CITY_TO_REGION = {
     'chicago': 2
 }
 CITIES = list(_CITY_TO_REGION.keys())
-HEADERS = {
-    'authorization': 'Token token="3b35f8a73dabd5f14b1cac167a14c1f6'
-}
+HEADERS = None  # we lazy load this below since it requires HTTP requests
 URL = ("https://www.ohmyrockness.com/api/shows.json?"
        "index=true&page={page}&per=100&regioned={region}")
 
 
 def generate_shows(city='new york'):
+    global HEADERS
+    if HEADERS is None:
+        token = get_authorization_token()
+        HEADERS = {'authorization': 'Token token="' + token}
+
     page = 1
     seen_ids = set()
 
