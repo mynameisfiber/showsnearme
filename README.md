@@ -7,18 +7,19 @@ all that "Web 2.0" stuff not interest you? We've got you covered.
 This repo provides a python module and CLI script to poll and display shows from
 [ohmyrockness.com](https://ohmyrockness.com).
 
-![](images/screenshot.png)
+![](showsnearme.png)
 
 
 ## CLI
 
 ```
-$ showsnearme  [-h] [--city {new york,los angeles,chicago}]
-              [-N, --n-shows N_SHOWS] [-n, --n-shows-daily N_SHOWS_DAILY]
-              [-A, --end-days N_END_DAYS] [-B, --start-days N_START_DAYS]
-              [--no-chunk-days] [--show-old] [--hide-url] [--imperial]
-              [--debug]
-              [location]
+$ showsnearme --help
+usage: showsnearme [-h] [--city {new york,los angeles,chicago}]
+                   [-N, --n-shows N_SHOWS] [-n, --n-shows-daily N_SHOWS_DAILY]
+                   [-A, --end-days N_END_DAYS] [-B, --start-days N_START_DAYS]
+                   [--token TOKEN] [--no-chunk-days] [--show-old] [--hide-url]
+                   [--imperial] [--debug]
+                   [location]
 Find local shows
 positional arguments:
   location              location of search (default: geoip location) (default:
@@ -36,6 +37,7 @@ optional arguments:
                         Number of days from now to end query (default: None)
   -B, --start-days N_START_DAYS
                         Number of days from now to start query (default: 0)
+  --token TOKEN         Authorization token for ohmyrockness (default: None)
   --no-chunk-days       Don't chunk results into calendar days (default: True)
   --show-old            Show shows that have already started (default: False)
   --hide-url            Whether to hide URLs from output (default: True)
