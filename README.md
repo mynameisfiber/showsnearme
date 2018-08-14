@@ -10,6 +10,15 @@ This repo provides a python module and CLI script to poll and display shows from
 ![](showsnearme.png)
 
 
+Install is easy! Just:
+
+```
+$ pip3 install git+https://github.com/mynameisfiber/showsnearme.git
+```
+
+NOTE: `showsnearme` requires python3.6+
+
+
 ## CLI
 
 ```
