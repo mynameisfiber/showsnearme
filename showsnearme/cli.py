@@ -31,6 +31,8 @@ parser.add_argument('--show-old', dest='pased_shows', action='store_true',
                     help='Show shows that have already started')
 parser.add_argument('--hide-url', dest='show_url', action='store_false',
                     help='Whether to hide URLs from output')
+parser.add_argument('--show-eta', dest='show_eta', action='store_true',
+                    help='Show ETA until show instead of absolute time')
 parser.add_argument('--imperial', dest='imperial', action='store_true',
                     help='Show distances in miles instead of km')
 

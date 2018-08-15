@@ -24,11 +24,11 @@ NOTE: `showsnearme` requires python3.6+
 ```
 $ showsnearme --help
 usage: showsnearme [-h] [--city {new york,los angeles,chicago}]
-                   [-N, --n-shows N_SHOWS] [-n, --n-shows-daily N_SHOWS_DAILY]
-                   [-A, --end-days N_END_DAYS] [-B, --start-days N_START_DAYS]
-                   [--token TOKEN] [--no-chunk-days] [--show-old] [--hide-url]
-                   [--imperial] [--debug]
-                   [location]
+              [-N, --n-shows N_SHOWS] [-n, --n-shows-daily N_SHOWS_DAILY]
+              [-A, --end-days N_END_DAYS] [-B, --start-days N_START_DAYS]
+              [--token TOKEN] [--no-chunk-days] [--show-old] [--hide-url]
+              [--show-eta] [--imperial] [--debug]
+              [location]
 Find local shows
 positional arguments:
   location              location of search (default: geoip location) (default:
@@ -50,6 +50,8 @@ optional arguments:
   --no-chunk-days       Don't chunk results into calendar days (default: True)
   --show-old            Show shows that have already started (default: False)
   --hide-url            Whether to hide URLs from output (default: True)
+  --show-eta            Show ETA until show instead of absolute time (default:
+                        False)
   --imperial            Show distances in miles instead of km (default: False)
   --debug               Debug Output (default: False)
 ```

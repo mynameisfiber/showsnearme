@@ -7,14 +7,18 @@ def timedelta_str(dt):
     return f'{dt.days}d{int(h)}h'
 
 
-def format_show(show, show_url=True):
+def format_show(show, show_url=True, show_eta=False):
     artists = [band['name'] for band in show['cached_bands']]
     if len(artists) > 3:
         artists = [*artists[:3], '...']
+    if show_eta:
+        timedisplay = timedelta_str(show['starts_at_timedelta'])
+    else:
+        timedisplay = show["starts_at"].strftime("%I:%M%p")[:-1]
     RA = Style.RESET_ALL
     return "".join((
         f'{Fore.GREEN}[{show["distance"]:0.2f}{show["distance_units"]}]{RA}',
-        f'{Fore.BLUE}[T-{timedelta_str(show["starts_at_timedelta"])}]{RA}',
+        f'{Fore.BLUE}[{timedisplay}]{RA}',
         f' {", ".join(artists)}',
         f' {Fore.RED}@{show["venue"]["name"].replace(" ", "_")}{RA}',
         (f' ({show["url"]})' if show_url else ''),
@@ -22,10 +26,10 @@ def format_show(show, show_url=True):
 
 
 def print_shows(shows, chunk_days=False, n_shows_daily=None,
-                show_url=True, **kwargs):
+                show_url=True, show_eta=False, **kwargs):
     if not chunk_days:
         for show in shows:
-            print(format_show(show, show_url=show_url))
+            print(format_show(show, show_url=show_url, show_eta=show_eta))
     else:
         shows_groups = itertools.groupby(
             shows,
@@ -46,5 +50,7 @@ def print_shows(shows, chunk_days=False, n_shows_daily=None,
                 if n_shows_daily and i >= n_shows_daily:
                     print(f"\t{Fore.RED}...more shows cut...{Style.RESET_ALL}")
                     break
-                print(f"\t{format_show(show, show_url=show_url)}")
+                display = format_show(show, show_url=show_url,
+                                      show_eta=show_eta)
+                print(f"\t{display}")
             first_iter = False
