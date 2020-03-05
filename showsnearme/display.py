@@ -8,9 +8,6 @@ def timedelta_str(dt):
 
 
 def format_show(show, show_url=True, show_eta=False):
-    artists = [band['name'] for band in show['cached_bands']]
-    if len(artists) > 3:
-        artists = [*artists[:3], '...']
     if show_eta:
         timedisplay = timedelta_str(show['starts_at_timedelta'])
     else:
@@ -19,7 +16,7 @@ def format_show(show, show_url=True, show_eta=False):
     return "".join((
         f'{Fore.GREEN}[{show["distance"]:0.2f}{show["distance_units"]}]{RA}',
         f'{Fore.BLUE}[{timedisplay}]{RA}',
-        f' {", ".join(artists)}',
+        f' {show["title"]}',
         f' {Fore.RED}@{show["venue"]["name"].replace(" ", "_")}{RA}',
         (f' ({show["url"]})' if show_url else ''),
     ))

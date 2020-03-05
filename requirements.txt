@@ -2,3 +2,4 @@ requests
 geocoder
 python-dateutil
 colorama
+ics
