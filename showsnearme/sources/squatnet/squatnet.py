@@ -10,6 +10,8 @@ base_url = "https://radar.squat.net/en/events/"
 
 
 class SquatNet:
+    location = (0, 0)
+
     def __init__(self, city=None, country=None):
         self.city = city
         self.country = country
@@ -56,8 +58,8 @@ class SquatNet:
             pass
         return {
             "name": "Montpellier",
-            "latitude": MONTPELLIER_LATLON[0],
-            "longitude": MONTPELLIER_LATLON[1],
+            "latitude": self.location[0],
+            "longitude": self.location[1],
         }
 
     def __call__(self, *args, **kwargs):

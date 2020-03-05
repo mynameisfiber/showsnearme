@@ -9,12 +9,11 @@ URL = (
     "no_html=true"
 )
 
-MONTPELLIER_LATLON = (43.6084009, 3.8793055)
-
 
 class VelocityMontpellier(Source, ICSSource):
-    location = MONTPELLIER_LATLON
+    location = (43.6084009, 3.8793055)
     distance = 500
 
     def __init__(self, *args, **kwargs):
-        super().__init__(url=URL, default_latlong=MONTPELLIER_LATLON)
+        super().__init__(url=URL, default_latlong=self.location,
+                         default_venue="Montpellier")

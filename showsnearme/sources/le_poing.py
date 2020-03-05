@@ -9,11 +9,10 @@ from ..geo import get_location
 from .source import Source
 
 URL = "https://lepoing.net/evenements/"
-MONTPELLIER_LATLON = (43.6084009, 3.8793055)
 
 
 class LePoing(Source):
-    location = MONTPELLIER_LATLON
+    location = (43.6084009, 3.8793055)
     distance = 500
 
     def __init__(self, *args, **kwargs):
@@ -51,15 +50,15 @@ class LePoing(Source):
                         **dict(
                             zip(
                                 ("latitude", "longitude"),
-                                get_location(address) or MONTPELLIER_LATLON,
+                                get_location(address) or self.location,
                             )
                         ),
                     }
                 except KeyError:
                     venue = {
                         "name": "Montpellier",
-                        "latitude": MONTPELLIER_LATLON[0],
-                        "longitude": MONTPELLIER_LATLON[1],
+                        "latitude": self.location[0],
+                        "longitude": self.location[1],
                     }
                 start_date = dateutil.parser.parse(event["startDate"])
                 end_date = dateutil.parser.parse(event["endDate"])

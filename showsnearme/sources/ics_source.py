@@ -5,7 +5,8 @@ from .source import Source
 
 
 class ICSSource:
-    def __init__(self, url, *args, default_latlong=None, **kwargs):
+    def __init__(self, url, *args, default_latlong=None, default_venue=None, **kwargs):
+        self.default_venue = default_venue
         self.default_latlong = default_latlong or []
         self.url = url
         super().__init__(*args, **kwargs)
@@ -17,7 +18,7 @@ class ICSSource:
         calendar = self._load_calendar()
         for event in calendar.events:
             venue = {
-                "name": event.location or "Montpellier",
+                "name": event.location or self.default_venue,
                 "latitude": getattr(event.geo, "latitude", self.default_latlong[0]),
                 "longitude": getattr(event.geo, "longitude", self.default_latlong[1]),
             }
