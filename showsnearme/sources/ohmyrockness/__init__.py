@@ -1,3 +1,2 @@
-from .ohmyrockness import OhMyRocknessNewYork
-from .ohmyrockness import OhMyRocknessChicago
-from .ohmyrockness import OhMyRocknessLosAngeles
+from .ohmyrockness import (OhMyRocknessChicago, OhMyRocknessLosAngeles,
+                           OhMyRocknessNewYork)

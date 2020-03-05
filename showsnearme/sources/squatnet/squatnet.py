@@ -1,9 +1,10 @@
 from urllib.parse import urljoin
-import dateutil.parser
-from lxml import html
-import requests
-from showsnearme.geo import get_location
 
+import dateutil.parser
+import requests
+from lxml import html
+
+from showsnearme.geo import get_location
 
 base_url = "https://radar.squat.net/en/events/"
 
@@ -17,15 +18,15 @@ class SquatNet:
     def url(self):
         url = base_url
         if self.country:
-            url = urljoin(url, f'country/{self.country}')
+            url = urljoin(url, f"country/{self.country}")
         if self.city:
-            url = urljoin(url, f'city/{self.city}')
+            url = urljoin(url, f"city/{self.city}")
         return url
 
     def _get_next_page(self, dom):
         try:
             item = dom.xpath(".//li[contains(@class, 'pager-next')]/a")[0]
-            return item.attrib['href']
+            return item.attrib["href"]
         except (IndexError, KeyError):
             return None
 
@@ -34,8 +35,9 @@ class SquatNet:
 
     def _parse_venue(self, event):
         location = event.find('.//div[@property="location"]')
-        address = ", ".join(l.strip()
-                            for l in location.find('.//*[@typeof="PostalAddress"]').itertext())
+        address = ", ".join(
+            l.strip() for l in location.find('.//*[@typeof="PostalAddress"]').itertext()
+        )
         try:
             name = location.find('.//*[@property="name"]').text
         except AttributeError:
@@ -43,8 +45,12 @@ class SquatNet:
         try:
             return {
                 "name": name,
-                **dict(zip(("latitude", "longitude"),
-                           get_location(address) or self.location))
+                **dict(
+                    zip(
+                        ("latitude", "longitude"),
+                        get_location(address) or self.location,
+                    )
+                ),
             }
         except KeyError:
             pass
@@ -57,7 +63,7 @@ class SquatNet:
     def __call__(self, *args, **kwargs):
         data_url = self.url
         while data_url:
-            body = requests.get(data_url).content.decode('utf8')
+            body = requests.get(data_url).content.decode("utf8")
             dom = html.fromstring(body)
             events = self._get_events(dom)
             if not events:
@@ -65,12 +71,16 @@ class SquatNet:
             data_url = self._get_next_page(dom)
             for event in events:
                 link_dom = event.find('.//h4[@property="schema:name"]/a')
-                start_date = event.find('.//span[@property="schema:startDate"]').attrib['content']
-                end_date = event.find('.//span[@property="schema:endDate"]').attrib['content']
+                start_date = event.find('.//span[@property="schema:startDate"]').attrib[
+                    "content"
+                ]
+                end_date = event.find('.//span[@property="schema:endDate"]').attrib[
+                    "content"
+                ]
                 yield {
                     "title": link_dom.text,
-                    "url": link_dom.attrib['href'],
-                    'starts_at': dateutil.parser.parse(start_date),
-                    'ends_at': dateutil.parser.parse(end_date),
-                    'venue': self._parse_venue(event),
+                    "url": link_dom.attrib["href"],
+                    "starts_at": dateutil.parser.parse(start_date),
+                    "ends_at": dateutil.parser.parse(end_date),
+                    "venue": self._parse_venue(event),
                 }

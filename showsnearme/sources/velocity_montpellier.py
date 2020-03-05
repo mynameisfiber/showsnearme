@@ -1,12 +1,13 @@
-from .source import Source
 from .ics_source import ICSSource
+from .source import Source
 
-
-URL = ("http://www.velocite-montpellier.fr/?"
-       "plugin=all-in-one-event-calendar&"
-       "controller=ai1ec_exporter_controller&"
-       "action=export_events&"
-       "no_html=true")
+URL = (
+    "http://www.velocite-montpellier.fr/?"
+    "plugin=all-in-one-event-calendar&"
+    "controller=ai1ec_exporter_controller&"
+    "action=export_events&"
+    "no_html=true"
+)
 
 MONTPELLIER_LATLON = (43.6084009, 3.8793055)
 

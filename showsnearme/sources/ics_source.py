@@ -1,6 +1,7 @@
-from .source import Source
-from ics import Calendar
 import requests
+from ics import Calendar
+
+from .source import Source
 
 
 class ICSSource:
@@ -10,13 +11,13 @@ class ICSSource:
         super().__init__(*args, **kwargs)
 
     def _load_calendar(self):
-        return Calendar(requests.get(self.url).content.decode('utf8'))
+        return Calendar(requests.get(self.url).content.decode("utf8"))
 
     def __call__(self, *args, **kwargs):
         calendar = self._load_calendar()
         for event in calendar.events:
             venue = {
-                "name": event.location or 'Montpellier',
+                "name": event.location or "Montpellier",
                 "latitude": getattr(event.geo, "latitude", self.default_latlong[0]),
                 "longitude": getattr(event.geo, "longitude", self.default_latlong[1]),
             }
@@ -28,4 +29,3 @@ class ICSSource:
                 "url": event.url,
             }
             yield data
-

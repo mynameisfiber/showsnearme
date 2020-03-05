@@ -1,8 +1,6 @@
-from .sources import Sources
-
-from .ohmyrockness import OhMyRocknessNewYork
-from .ohmyrockness import OhMyRocknessChicago
-from .ohmyrockness import OhMyRocknessLosAngeles
-from .velocity_montpellier import VelocityMontpellier
 from .le_poing import LePoing
+from .ohmyrockness import (OhMyRocknessChicago, OhMyRocknessLosAngeles,
+                           OhMyRocknessNewYork)
+from .sources import Sources
 from .squatnet import SquatNetMontpellier
+from .velocity_montpellier import VelocityMontpellier

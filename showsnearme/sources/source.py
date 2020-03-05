@@ -1,5 +1,6 @@
 from .sources import Sources
 
+
 class Source:
     location = (0, 0)
     distance = 100
