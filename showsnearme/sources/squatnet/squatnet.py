@@ -65,7 +65,10 @@ class SquatNet:
     def __call__(self, *args, **kwargs):
         data_url = self.url
         while data_url:
-            body = requests.get(data_url).content.decode("utf8")
+            try:
+                body = requests.get(data_url, timeout=5).content.decode("utf8")
+            except ConnectionError:
+                pass
             dom = html.fromstring(body)
             events = self._get_events(dom)
             if not events:
