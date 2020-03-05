@@ -18,7 +18,7 @@ def format_show(show, show_url=True, show_eta=False):
         f'{Fore.BLUE}[{timedisplay}]{RA}',
         f' {show["title"]}',
         f' {Fore.RED}@{show["venue"]["name"].replace(" ", "_")}{RA}',
-        (f' ({show["url"]})' if show_url else ''),
+        (f' {show["url"]}' if show_url else ''),
     ))
 
 

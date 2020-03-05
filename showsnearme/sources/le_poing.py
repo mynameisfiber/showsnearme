@@ -32,7 +32,7 @@ class LePoing(Source):
         except (IndexError, KeyError):
             return None
 
-    def __call__(self):
+    def __call__(self, *args, min_date=None, max_date=None, **kwargs):
         data_url = URL
         while data_url:
             body = requests.get(data_url).content.decode('utf8')
@@ -54,11 +54,14 @@ class LePoing(Source):
                         "latitude": MONTPELLIER_LATLON[0],
                         "longitude": MONTPELLIER_LATLON[1],
                     }
+                start_date = dateutil.parser.parse(event['startDate'])
+                end_date = dateutil.parser.parse(event['endDate'])
                 yield {
                     "title": event['name'],
                     "url": event['url'],
-                    'starts_at': dateutil.parser.parse(event['startDate']),
-                    'ends_at': dateutil.parser.parse(event['endDate']),
-                    'url': event['url'],
+                    'starts_at': start_date,
+                    'ends_at': end_date,
                     'venue': venue,
                 }
+            if min_date is not None and start_date < min_date:
+                break

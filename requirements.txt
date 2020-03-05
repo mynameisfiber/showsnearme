@@ -4,3 +4,4 @@ python-dateutil
 colorama
 ics
 lxml
+pytz

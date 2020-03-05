@@ -1,0 +1,1 @@
+from .squatnet_montpellier import SquatNetMontpellier

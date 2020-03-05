@@ -12,7 +12,7 @@ class ICSSource:
     def _load_calendar(self):
         return Calendar(requests.get(self.url).content.decode('utf8'))
 
-    def __call__(self):
+    def __call__(self, *args, **kwargs):
         calendar = self._load_calendar()
         for event in calendar.events:
             venue = {

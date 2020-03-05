@@ -29,7 +29,7 @@ class _OhMyRockness(Source):
         self.__seen_ids.add(_id)
         return not_in
 
-    def __call__(self):
+    def __call__(self, *args, **kwargs):
         page = 1
         seen_ids = set()
     
