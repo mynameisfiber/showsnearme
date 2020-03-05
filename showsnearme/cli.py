@@ -28,7 +28,7 @@ parser.add_argument('--imperial', dest='imperial', action='store_true',
 
 parser.add_argument('--no-chunk-days', dest='chunk_days', action='store_false',
                     help="Don't chunk results into calendar days")
-parser.add_argument('--show-old', dest='pased_shows', action='store_true',
+parser.add_argument('--show-old', dest='passed_shows', action='store_true',
                     help='Show shows that have already started')
 parser.add_argument('--hide-url', dest='show_url', action='store_false',
                     help='Whether to hide URLs from output')

@@ -26,7 +26,7 @@ def query_shows(location=None, n_shows=5, n_start_days=None, n_end_days=None,
 
         show['starts_at_timedelta'] = (starts_at - now)
         show['num_days'] = num_days = (starts_at.date() - now.date()).days
-        if n_start_days and -1 * num_days < n_start_days:
+        if n_start_days and num_days < n_start_days:
             continue
         elif n_end_days and num_days >= n_end_days:
             break
