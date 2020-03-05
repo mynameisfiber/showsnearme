@@ -16,12 +16,12 @@ URL = ("https://www.ohmyrockness.com/api/shows.json?"
 
 
 class _OhMyRockness(Source):
-    def __init__(self, city='new york', token=None):
+    def __init__(self, *args, city='new york', token=None, **kwargs):
         self.token = token or get_authorization_token()
         self.city = city
         self.name = f'OhMyRockness.{city.replace(" ","_")}'
         self.__seen_ids = set()
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def _is_new(self, show):
         _id = show['id']

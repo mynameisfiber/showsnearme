@@ -3,3 +3,4 @@ geocoder
 python-dateutil
 colorama
 ics
+lxml

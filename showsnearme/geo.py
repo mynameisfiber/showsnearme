@@ -1,13 +1,20 @@
 import geocoder
+from functools import lru_cache
 from math import radians, cos, sin, asin, sqrt
 
 
+@lru_cache(maxsize=None)
 def get_location(location=None):
     if location is None:
         location = geocoder.ip('me')
-    else:
-        location = geocoder.google(location)
-    return location.latlng
+        return location.latlng
+    location = geocoder.osm(location)
+    try:
+        if location.ok:
+            return [location.osm['y'], location.osm['x']]
+    except KeyError:
+        pass
+    return None
 
 
 def haversine(A, B, imperial=False):

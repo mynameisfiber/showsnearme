@@ -24,6 +24,7 @@ class ICSSource:
                 "title": event.name,
                 "venue": venue,
                 "starts_at": event.begin.datetime,
+                "ends_at": event.end.datetime,
                 "url": event.url,
             }
             yield data

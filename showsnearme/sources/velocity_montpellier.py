@@ -15,5 +15,5 @@ class VelocityMontpellier(Source, ICSSource):
     location = MONTPELLIER_LATLON
     distance = 500
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         super().__init__(url=URL, default_latlong=MONTPELLIER_LATLON)

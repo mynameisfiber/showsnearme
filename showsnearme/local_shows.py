@@ -21,12 +21,12 @@ def query_shows(location=None, n_shows=5, n_start_days=None, n_end_days=None,
 
         starts_at = show['starts_at']
         now = datetime.datetime.now(starts_at.tzinfo)
-        if starts_at < now:
+        if not passed_shows and starts_at < now:
             continue
 
         show['starts_at_timedelta'] = (starts_at - now)
         show['num_days'] = num_days = (starts_at.date() - now.date()).days
-        if n_start_days and num_days < n_start_days:
+        if n_start_days and -1 * num_days < n_start_days:
             continue
         elif n_end_days and num_days >= n_end_days:
             break
