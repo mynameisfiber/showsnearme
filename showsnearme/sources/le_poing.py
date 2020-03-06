@@ -40,6 +40,12 @@ class LePoing(Source):
             events = self._get_events(dom)
             data_url = self._get_next_page(dom)
             for event in events:
+                start_date = dateutil.parser.parse(event["startDate"])
+                end_date = dateutil.parser.parse(event["endDate"])
+                if (min_date and start_date < min_date) or (
+                    max_date and end_date > max_date
+                ):
+                    continue
                 try:
                     address = ", ".join(
                         event["location"]["address"][f]
@@ -60,8 +66,6 @@ class LePoing(Source):
                         "latitude": self.location[0],
                         "longitude": self.location[1],
                     }
-                start_date = dateutil.parser.parse(event["startDate"])
-                end_date = dateutil.parser.parse(event["endDate"])
                 yield {
                     "title": event["name"],
                     "url": event["url"],

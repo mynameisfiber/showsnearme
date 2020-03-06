@@ -1,4 +1,5 @@
 import datetime
+import itertools
 
 import pytz
 
@@ -20,12 +21,16 @@ def query_shows(
 ):
     now = datetime.datetime.now(pytz.utc)
     if n_start_days is not None:
-        min_date = now - datetime.timedelta(days=n_start_days)
+        min_date = (now - datetime.timedelta(days=n_start_days)).replace(
+            hour=0, minute=0, second=0
+        )
     else:
         min_date = None
 
     if n_end_days is not None:
-        max_date = now - datetime.timedelta(days=n_end_days)
+        max_date = (now + datetime.timedelta(days=n_end_days)).replace(
+            hour=23, minute=59, second=59
+        )
     else:
         max_date = None
 
@@ -48,17 +53,22 @@ def query_shows(
                 continue
 
             starts_at = show["starts_at"]
+            ends_at = show["ends_at"]
             now = datetime.datetime.now(starts_at.tzinfo)
             if not passed_shows and starts_at < now:
                 continue
 
             show["starts_at_timedelta"] = starts_at - now
             show["num_days"] = num_days = (starts_at.date() - now.date()).days
-            if n_start_days and num_days < n_start_days:
+            if min_date and ends_at < min_date:
                 continue
-            elif n_end_days and num_days >= n_end_days:
+            elif max_date and starts_at > max_date:
                 break
             source_shows.append(show)
         shows.extend(source_shows)
-    shows.sort(key=lambda item: item["starts_at"])
+    shows.sort(key=lambda item: (item["starts_at"], item["title"]))
+    shows = [
+        next(show_group)
+        for _, show_group in itertools.groupby(shows, lambda s: s["title"])
+    ]
     return shows
