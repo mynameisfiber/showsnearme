@@ -66,6 +66,12 @@ parser.add_argument(
     help="Whether to hide URLs from output",
 )
 parser.add_argument(
+    "--terminal-link",
+    dest="use_terminal_links",
+    action="store_true",
+    help="Use terminal hyperlink support",
+)
+parser.add_argument(
     "--show-eta",
     dest="show_eta",
     action="store_true",
@@ -78,7 +84,10 @@ parser.add_argument("--debug", action="store_true", help="Debug Output")
 def main():
     args = parser.parse_args()
 
-    args.location = geo.get_location(args.location)
+    if args.location is None:
+        args.location = geo.get_current_location()
+    else:
+        args.location = geo.get_location(args.location)
     if not (args.n_shows or args.n_end_days):
         args.n_shows = 5
 

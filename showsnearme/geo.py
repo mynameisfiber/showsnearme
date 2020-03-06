@@ -1,21 +1,47 @@
+import re
 from functools import lru_cache
 from math import asin, cos, radians, sin, sqrt
 
 import geocoder
 
 
+def clean_address(address):
+    address = address.replace("\n", ", ")
+    address = _address_not_overlap(address)
+    return address
+
+
+def _address_not_overlap(address):
+    address_parts_clean = []
+    address_lower = address.lower()
+    address_parts = address.split(",")
+    i = 0
+    for a in address_parts:
+        i += len(a) + 1
+        if a and a.lower() not in address_lower[i:]:
+            address_parts_clean.append(a.strip())
+    return ", ".join(address_parts_clean)
+
+
+def get_current_location():
+    return geocoder.ip("me").latlng
+
+
 @lru_cache(maxsize=None)
-def get_location(location=None):
-    if location is None:
-        location = geocoder.ip("me")
-        return location.latlng
-    location = geocoder.osm(location)
+def get_location(address):
+    if not address:
+        return None
+    location = geocoder.osm(address)
     try:
         if location.ok:
             return [location.osm["y"], location.osm["x"]]
     except KeyError:
         pass
-    return None
+    try:
+        index = address.index(",")
+    except ValueError:
+        return None
+    return get_location(address[index + 1 :].strip())
 
 
 def haversine(A, B, imperial=False):

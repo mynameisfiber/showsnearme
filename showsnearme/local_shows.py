@@ -15,6 +15,7 @@ def query_shows(
     passed_shows=True,
     imperial=False,
     max_distance=None,
+    debug=False,
     **kwargs
 ):
     now = datetime.datetime.now(pytz.utc)
@@ -28,20 +29,23 @@ def query_shows(
     else:
         max_date = None
 
-    location = location or geo.get_location()
+    location = location or geo.get_current_location()
     shows = []
     sources = Sources(location, max_distance)
     for source in sources(min_date=min_date, max_date=max_date):
+        source_shows = []
         for show in source:
-            if len(shows) == n_shows:
+            if len(source_shows) == n_shows:
                 break
             venue_location = [
                 float(show["venue"].get(f) or 0.0) for f in ("latitude", "longitude")
             ]
-            show["distance"] = geo.haversine(
+            distance = show["distance"] = geo.haversine(
                 location, venue_location, imperial=imperial
             )
             show["distance_units"] = "km" if not imperial else "mi"
+            if max_distance and distance > max_distance:
+                continue
 
             starts_at = show["starts_at"]
             now = datetime.datetime.now(starts_at.tzinfo)
@@ -54,8 +58,7 @@ def query_shows(
                 continue
             elif n_end_days and num_days >= n_end_days:
                 break
-            shows.append(show)
-    shows.sort(
-        key=lambda item: (chunk_days and item["num_days"] or 0, item["distance"])
-    )
+            source_shows.append(show)
+        shows.extend(source_shows)
+    shows.sort(key=lambda item: item["starts_at"])
     return shows

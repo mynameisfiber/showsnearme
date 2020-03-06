@@ -3,7 +3,6 @@ from urllib.parse import urljoin
 import dateutil.parser
 import requests
 from lxml import html
-
 from showsnearme.geo import get_location
 
 base_url = "https://radar.squat.net/en/events/"

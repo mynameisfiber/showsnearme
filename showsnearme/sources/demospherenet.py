@@ -1,18 +1,12 @@
 from .ics_source import ICSSource
 from .source import Source
 
-URL = (
-    "http://www.velocite-montpellier.fr/?"
-    "plugin=all-in-one-event-calendar&"
-    "controller=ai1ec_exporter_controller&"
-    "action=export_events&"
-    "no_html=true"
-)
+URL = "https://herault.demosphere.net/events.ics"
 
 
-class VelocityMontpellier(Source, ICSSource):
+class DemosphereNet(Source, ICSSource):
     location = (43.6084009, 3.8793055)
-    distance = 500
+    distance = 1000
 
     def __init__(self, *args, **kwargs):
         super().__init__(

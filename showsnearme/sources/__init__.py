@@ -1,3 +1,4 @@
+from .demospherenet import DemosphereNet
 from .le_poing import LePoing
 from .ohmyrockness import (OhMyRocknessChicago, OhMyRocknessLosAngeles,
                            OhMyRocknessNewYork)
