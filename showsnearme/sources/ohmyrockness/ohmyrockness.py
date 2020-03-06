@@ -43,6 +43,7 @@ class _OhMyRockness(Source):
             data = req.json()
             for show in data:
                 show["starts_at"] = dateutil.parser.parse(show["starts_at"])
+                show['venue']['address'] - show['venue']['full_address']
                 artists = [band["name"] for band in show["cached_bands"]]
                 if len(artists) > 3:
                     artists = [*artists[:3], "..."]

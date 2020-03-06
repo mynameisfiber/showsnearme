@@ -50,9 +50,11 @@ class LePoing(Source):
                     address = ", ".join(
                         event["location"]["address"][f]
                         for f in ("streetAddress", "addressLocality", "postalCode")
+                        if event['location'].get(f)
                     )
                     venue = {
                         "name": event["location"]["name"],
+                        "address": address,
                         **dict(
                             zip(
                                 ("latitude", "longitude"),
@@ -63,6 +65,7 @@ class LePoing(Source):
                 except KeyError:
                     venue = {
                         "name": "Montpellier",
+                        "address": "Montpellier",
                         "latitude": self.location[0],
                         "longitude": self.location[1],
                     }

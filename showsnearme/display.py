@@ -30,14 +30,16 @@ def format_show(show, use_terminal_links=False, show_url=True, show_eta=False):
         timedisplay = show["starts_at"].strftime("%Hh%M")
     RA = Style.RESET_ALL
     title = textwrap.shorten(show["title"], width=64, placeholder=WRAP_CHAR)
+    venue_name = shorten_venue_name(show["venue"]["name"])
     if use_terminal_links:
         title = term_link(show["url"], title)
+        venue_name = term_link(f'https://www.google.com/maps/search/{show["venue"]["address"]}', venue_name)
     return "".join(
         (
             f"{Fore.BLUE}[{timedisplay}]{RA}",
             f'{Fore.GREEN}[{show["distance"]:04.1f}{show["distance_units"]}]{RA}',
             f" {title}",
-            f' {Fore.RED}@{shorten_venue_name(show["venue"]["name"])}{RA}',
+            f' {Fore.RED}@{venue_name}{RA}',
             (f' {show["url"]}' if show_url else ""),
         )
     )

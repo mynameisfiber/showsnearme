@@ -46,6 +46,7 @@ class SquatNet:
         try:
             return {
                 "name": name,
+                "address": address,
                 **dict(
                     zip(
                         ("latitude", "longitude"),
@@ -57,6 +58,7 @@ class SquatNet:
             pass
         return {
             "name": "Montpellier",
+            "address": address,
             "latitude": self.location[0],
             "longitude": self.location[1],
         }

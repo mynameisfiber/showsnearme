@@ -48,6 +48,7 @@ class ICSSource:
             latlon = self._get_location(event)
             venue = {
                 "name": event.location or self.default_venue,
+                "address": event.location,
                 "latitude": latlon[0],
                 "longitude": latlon[1],
             }
