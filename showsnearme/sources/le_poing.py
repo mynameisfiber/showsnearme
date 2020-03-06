@@ -50,7 +50,7 @@ class LePoing(Source):
                     address = ", ".join(
                         event["location"]["address"][f]
                         for f in ("streetAddress", "addressLocality", "postalCode")
-                        if event['location'].get(f)
+                        if event["location"].get(f)
                     )
                     venue = {
                         "name": event["location"]["name"],

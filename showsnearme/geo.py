@@ -1,8 +1,9 @@
 import re
-from functools import lru_cache
 from math import asin, cos, radians, sin, sqrt
 
 import geocoder
+
+from .utils import filecache
 
 
 def clean_address(address):
@@ -27,7 +28,7 @@ def get_current_location():
     return geocoder.ip("me").latlng
 
 
-@lru_cache(maxsize=None)
+@filecache("location")
 def get_location(address):
     if not address:
         return None
