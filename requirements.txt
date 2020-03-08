@@ -1,6 +1,6 @@
 requests
 geocoder
-python-dateutil
+dateparser
 colorama
 ics
 lxml

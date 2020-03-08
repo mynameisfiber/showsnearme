@@ -1,6 +1,6 @@
 from urllib.parse import urljoin
 
-import dateutil.parser
+import dateparser
 import requests
 from lxml import html
 from showsnearme.geo import get_location
@@ -86,7 +86,7 @@ class SquatNet:
                 yield {
                     "title": link_dom.text,
                     "url": link_dom.attrib["href"],
-                    "starts_at": dateutil.parser.parse(start_date),
-                    "ends_at": dateutil.parser.parse(end_date),
+                    "starts_at": dateparser.parse(start_date),
+                    "ends_at": dateparser.parse(end_date),
                     "venue": self._parse_venue(event),
                 }

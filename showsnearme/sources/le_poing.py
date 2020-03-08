@@ -1,7 +1,7 @@
 import json
 from urllib.parse import urljoin
 
-import dateutil.parser
+import dateparser
 import requests
 from lxml import html
 
@@ -40,8 +40,8 @@ class LePoing(Source):
             events = self._get_events(dom)
             data_url = self._get_next_page(dom)
             for event in events:
-                start_date = dateutil.parser.parse(event["startDate"])
-                end_date = dateutil.parser.parse(event["endDate"])
+                start_date = dateparser.parse(event["startDate"])
+                end_date = dateparser.parse(event["endDate"])
                 if (min_date and start_date < min_date) or (
                     max_date and end_date > max_date
                 ):

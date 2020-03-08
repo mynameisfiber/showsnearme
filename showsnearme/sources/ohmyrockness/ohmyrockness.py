@@ -1,6 +1,6 @@
 from operator import itemgetter
 
-import dateutil.parser
+import dateparser
 import requests
 
 from ..source import Source
@@ -42,7 +42,7 @@ class _OhMyRockness(Source):
                 raise Exception("Expired/Invalid authorization token")
             data = req.json()
             for show in data:
-                show["starts_at"] = dateutil.parser.parse(show["starts_at"])
+                show["starts_at"] = dateparser.parse(show["starts_at"])
                 show["venue"]["address"] - show["venue"]["full_address"]
                 artists = [band["name"] for band in show["cached_bands"]]
                 if len(artists) > 3:
