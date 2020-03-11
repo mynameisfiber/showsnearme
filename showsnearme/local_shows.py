@@ -67,8 +67,11 @@ def query_shows(
             source_shows.append(show)
         shows.extend(source_shows)
     shows.sort(key=lambda item: (item["starts_at"], item["title"]))
-    shows = [
-        next(show_group)
-        for _, show_group in itertools.groupby(shows, lambda s: s["title"])
-    ]
+    shows = dedup_shows(shows)
     return shows
+
+
+def dedup_shows(shows):
+    _iter = itertools.groupby(shows, lambda s: s["title"])
+    return [next(show_group) for _, show_group in _iter]
+
