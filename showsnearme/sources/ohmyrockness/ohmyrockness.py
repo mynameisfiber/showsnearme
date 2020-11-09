@@ -43,7 +43,10 @@ class _OhMyRockness(Source):
             data = req.json()
             for show in data:
                 show["starts_at"] = dateparser.parse(show["starts_at"])
-                show["venue"]["address"] - show["venue"]["full_address"]
+                if show["venue"]["slug"] == "the-internet":
+                    show["venue"]["address"] = self.city
+                else:
+                    show["venue"]["address"] = show["venue"]["full_address"].strip()
                 artists = [band["name"] for band in show["cached_bands"]]
                 if len(artists) > 3:
                     artists = [*artists[:3], "..."]
@@ -62,21 +65,21 @@ class _OhMyRockness(Source):
 
 
 class OhMyRocknessNewYork(_OhMyRockness):
-    location = (40.7128, 74.0060)
+    location = (40.7128, -74.0060)
 
     def __init__(self, *args, **kwargs):
         super().__init__(city="new york", *args, **kwargs)
 
 
 class OhMyRocknessChicago(_OhMyRockness):
-    location = (41.8781, 87.6298)
+    location = (41.8781, -87.6298)
 
     def __init__(self, *args, **kwargs):
         super().__init__(city="chicago", *args, **kwargs)
 
 
 class OhMyRocknessLosAngeles(_OhMyRockness):
-    location = (34.0522, 118.2437)
+    location = (34.0522, -118.2437)
 
     def __init__(self, *args, **kwargs):
         super().__init__(city="los angeles", *args, **kwargs)

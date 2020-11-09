@@ -7,6 +7,13 @@ from . import geo
 from .sources import Sources
 
 
+def iter_skip_execption(iter_):
+    try:
+        yield from iter_
+    except Exception:
+        pass
+
+
 def query_shows(
     location=None,
     n_shows=5,
@@ -39,7 +46,7 @@ def query_shows(
     sources = Sources(location, max_distance)
     for source in sources(min_date=min_date, max_date=max_date):
         source_shows = []
-        for show in source:
+        for show in iter_skip_execption(source):
             if len(source_shows) == n_shows:
                 break
             venue_location = [
@@ -53,14 +60,14 @@ def query_shows(
                 continue
 
             starts_at = show["starts_at"]
-            ends_at = show["ends_at"]
+            ends_at = show.get("ends_at")
             now = datetime.datetime.now(starts_at.tzinfo)
             if not passed_shows and starts_at < now:
                 continue
 
             show["starts_at_timedelta"] = starts_at - now
             show["num_days"] = num_days = (starts_at.date() - now.date()).days
-            if min_date and ends_at < min_date:
+            if min_date and ends_at and ends_at < min_date:
                 continue
             elif max_date and starts_at > max_date:
                 break
