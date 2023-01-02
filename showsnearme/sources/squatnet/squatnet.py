@@ -70,7 +70,6 @@ class SquatNet:
         }
 
     def __call__(self, *args, **kwargs):
-        print("hi")
         data_url = self.url
         while data_url:
             try:

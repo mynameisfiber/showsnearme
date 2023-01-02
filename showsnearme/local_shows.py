@@ -93,8 +93,6 @@ def query_shows(
 
 def merge_shows(shows):
     shows = sorted(shows, key=lambda s: getattr(s['source'], 'priority', 0))
-    print([(s['source'], getattr(s['source'], 'priority', 0)) for s in shows])
-    print(shows)
     logger.debug(f"merging: {shows}")
     return dict(ChainMap(*shows))
 
