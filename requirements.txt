@@ -5,3 +5,4 @@ colorama
 ics
 lxml
 pytz
+python-slugify

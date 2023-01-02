@@ -38,8 +38,11 @@ def format_show(show, use_terminal_links=False, show_url=True, show_eta=False):
         desc = ''
     if use_terminal_links:
         title = term_link(show["url"], title)
+        address = show["venue"]["address"].strip()
+        if not address:
+            address = venue_name
         venue_name = term_link(
-            f'https://www.google.com/maps/search/{show["venue"]["address"]}', venue_name
+            f'https://www.google.com/maps/search/{address}', venue_name
         )
     return "".join(
         (

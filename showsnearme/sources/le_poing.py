@@ -1,5 +1,6 @@
 import json
 from urllib.parse import urljoin
+from html import unescape
 import logging
 
 import dateparser
@@ -77,8 +78,13 @@ class LePoing(Source):
                 except Exception as e:
                     logger.debug("Exception: {event}: {e}", exc_info=True)
                     continue
+                if event.get('description'):
+                    description = unescape(event['description'])
+                else:
+                    description = None
                 yield {
-                    "title": event["name"],
+                    "title": unescape(event["name"]),
+                    "description": description,
                     "url": event["url"],
                     "starts_at": start_date,
                     "ends_at": end_date,

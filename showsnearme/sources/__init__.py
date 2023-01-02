@@ -1,9 +1,11 @@
 from .sources import Sources
+from .squatnet import SquatNetMontpellier
+from .le_poing import LePoing
+"""
 from .cafegazette import CafeGazette
 from .mamasoundfr import MamaSoundFR
 from .demospherenet import DemosphereNet
-from .le_poing import LePoing
 from .ohmyrockness import (OhMyRocknessChicago, OhMyRocknessLosAngeles,
                            OhMyRocknessNewYork)
-from .squatnet import SquatNetMontpellier
 from .velocity_montpellier import VelocityMontpellier
+"""

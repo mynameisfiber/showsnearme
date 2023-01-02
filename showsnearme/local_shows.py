@@ -1,7 +1,9 @@
 import datetime
 import itertools
 import logging
+from collections import ChainMap
 
+from slugify import slugify
 import pytz
 
 from . import geo
@@ -47,7 +49,7 @@ def query_shows(
     location = location or geo.get_current_location()
     shows = []
     sources = Sources(location, max_distance)
-    for source in sources(min_date=min_date, max_date=max_date):
+    for source_ins, source in sources(min_date=min_date, max_date=max_date):
         source_shows = []
         for show in iter_skip_execption(source):
             logger.debug(f"Considering show: {show}")
@@ -81,6 +83,7 @@ def query_shows(
                 logger.debug(f"Show is too far in the future: {starts_at} > {max_date}")
                 break
             logger.debug("Adding show to list")
+            show["source"] = source_ins
             source_shows.append(show)
         shows.extend(source_shows)
     shows.sort(key=lambda item: (item["starts_at"], item["title"]))
@@ -88,7 +91,14 @@ def query_shows(
     return shows
 
 
+def merge_shows(shows):
+    shows = sorted(shows, key=lambda s: getattr(s['source'], 'priority', 0))
+    print([(s['source'], getattr(s['source'], 'priority', 0)) for s in shows])
+    print(shows)
+    logger.debug(f"merging: {shows}")
+    return dict(ChainMap(*shows))
+
 def dedup_shows(shows):
-    _iter = itertools.groupby(shows, lambda s: s["title"])
-    return [next(show_group) for _, show_group in _iter]
+    _iter = itertools.groupby(shows, lambda s: slugify(s["title"]))
+    return [merge_shows(show_group) for _, show_group in _iter]
 

@@ -7,6 +7,7 @@ URL = "https://herault.demosphere.net/events.ics"
 class DemosphereNet(Source, ICSSource):
     location = (43.6084009, 3.8793055)
     distance = 1000
+    priority = 100
 
     def __init__(self, *args, **kwargs):
         super().__init__(

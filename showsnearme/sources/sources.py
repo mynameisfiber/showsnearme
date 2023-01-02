@@ -16,5 +16,5 @@ class Sources:
         self.__registry.append(cls)
 
     def __call__(self, *args, **kwargs):
-        iters = [i(*args, **kwargs) for i in self.instances]
+        iters = [(i, i(*args, **kwargs)) for i in self.instances]
         return iters

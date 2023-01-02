@@ -1,14 +1,17 @@
 from urllib.parse import urljoin
+import logging
 
 import dateparser
 import requests
 from lxml import html
 from showsnearme.geo import get_location
 
+logger = logging.getLogger(__name__)
 base_url = "https://radar.squat.net/en/events/"
 
 
 class SquatNet:
+    priority = 100
     location = (0, 0)
 
     def __init__(self, city=None, country=None):
@@ -42,7 +45,10 @@ class SquatNet:
         try:
             name = location.find('.//*[@property="name"]').text
         except AttributeError:
-            name = address
+            try:
+                name = event.find('.//*[@class="group"]//*[@property="schema:name"]').text
+            except AttributeError:
+                name = address
         try:
             return {
                 "name": name,
@@ -57,19 +63,20 @@ class SquatNet:
         except KeyError:
             pass
         return {
-            "name": "Montpellier",
+            "name": name or self.city,
             "address": address,
             "latitude": self.location[0],
             "longitude": self.location[1],
         }
 
     def __call__(self, *args, **kwargs):
+        print("hi")
         data_url = self.url
         while data_url:
             try:
                 body = requests.get(data_url, timeout=5).content.decode("utf8")
             except ConnectionError:
-                pass
+                return
             dom = html.fromstring(body)
             events = self._get_events(dom)
             if not events:
