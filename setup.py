@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="showsnearme",
-    version="0.4.1",
+    version="0.4.2",
     description="Using the ohmyrockness to bring shows to your CLI",
     url="http://github.com/mynameisfiber/showsnearme",
     author="Micha Gorelick",
