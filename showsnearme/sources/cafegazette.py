@@ -45,7 +45,6 @@ class CafeGazette(Source):
                 break
             title = title.title()
             url = event.find(".//link").text
-            desc = event.find(".//description").text
             yield {
                 "title": title,
                 "url": url,
