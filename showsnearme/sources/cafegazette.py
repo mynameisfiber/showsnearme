@@ -1,12 +1,16 @@
-from datetime import timedelta
+from datetime import timedelta, time, datetime
+import logging
+import re
 
 import dateparser
 import pytz
 import requests
-from lxml import etree
+from lxml import etree, html
 
 from .source import Source
 
+
+logger = logging.getLogger(__name__)
 URL = "https://www.gazettecafe.com/blog-feed.xml"
 
 
@@ -23,32 +27,60 @@ class CafeGazette(Source):
             "latitude": self.location[0],
             "longitude": self.location[1],
         }
+        self.zero_time = time(0, 0)
         self.one_hour = timedelta(hours=1)
+
+    def _parsedate(self, text) -> datetime | None:
+        if "EN SOIRÉE" in text.upper():
+            return datetime(1, 1, 1, hour=22)
+        elif match := re.match('([0-9]{1,2})H', text):
+            hour = int(match.groups()[0])
+            return datetime(1, 1, 1, hour=hour)
+        else:
+            return dateparser.parse(text)
 
     def __call__(self, *args, min_date=None, max_date=None, **kwargs):
         data = requests.get(URL).content
         dom = etree.fromstring(data)
-        for event in dom.findall(".//item"):
-            try:
-                title_raw = event.find(".//title").text
-                date_str, time_str, title = map(str.strip, title_raw.split(" - ", 2))
-            except ValueError:
+        event_blocks = dom.findall(".//item")
+        ns = {'content':'http://purl.org/rss/1.0/modules/content/'}
+        events = []
+        for block in event_blocks:
+            blocktitle = block.find('./title').text
+            if not "AGENDA" in blocktitle:
                 continue
-            date = dateparser.parse(date_str)
-            time = dateparser.parse(time_str)
-            starts_at = date.replace(
-                hour=time.hour, minute=time.minute, tzinfo=self.timezone
-            )
-            if starts_at < min_date:
-                continue
-            elif starts_at + self.one_hour > max_date:
-                break
-            title = title.title()
-            url = event.find(".//link").text
-            yield {
-                "title": title,
-                "url": url,
-                "starts_at": starts_at,
-                "ends_at": starts_at + self.one_hour,
-                "venue": self.venue,
-            }
+            blockdate = self._parsedate(block.find('./pubDate').text)
+            if blockdate:
+                blockyear = blockdate.year
+            else:
+                blockyear = datetime.now().year
+            url = block.find('./link').text
+            content = block.find('./content:encoded', ns)
+            blockdom = html.fromstring(content.text)
+            curdate = None
+            curtime = None
+            for paragraph in blockdom.findall('./p'):
+                ptext = "".join(paragraph.itertext()).strip()
+                if not ptext:
+                    continue
+                date = self._parsedate(ptext)
+                if date is not None:
+                    if date.time() == self.zero_time:
+                        curdate = date.replace(year=blockyear)
+                    else:
+                        curtime = date.time()
+                elif curdate != None and curtime != None and '[ANNULÉ]' not in ptext:
+                    starts_at = datetime.combine(curdate, curtime, tzinfo=self.timezone)
+                    curtime = None
+                    if min_date and starts_at < min_date:
+                        continue
+                    title = paragraph.find('.//strong').text.title()
+                    events.append({
+                        "title": title,
+                        "url": url,
+                        "starts_at": starts_at,
+                        "ends_at": starts_at + self.one_hour,
+                        "venue": self.venue,
+                    })
+        events.sort(key=lambda e: e['starts_at'])
+        yield from events
