@@ -61,7 +61,6 @@ class MamaSoundFR(Source):
     def __call__(self, *args, min_date: datetime | None =None, max_date: datetime | None=None, **kwargs):
         query = self._create_query(start_time=min_date)
         data = requests.get(URL, params={"q": json.dumps(query)}).json()
-        print("!!!!!!!!!!!!!!!!!!!!!!!!")
         for event in self._clean_data(data):
             starts_at = datetime.fromtimestamp(event['startTM'] / 1000.0, tz=self.timezone)
             if min_date and starts_at < min_date:
