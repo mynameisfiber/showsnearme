@@ -1,5 +1,6 @@
 import json
 from urllib.parse import urljoin
+import logging
 
 import dateparser
 import requests
@@ -8,6 +9,8 @@ from lxml import html
 from ..geo import get_location
 from .source import Source
 
+
+logger = logging.getLogger(__name__)
 URL = "https://lepoing.net/evenements/"
 
 
@@ -23,7 +26,7 @@ class LePoing(Source):
             data_raw = dom.xpath('.//script[@type="application/ld+json"]')[0].text
         except IndexError:
             return []
-        return json.loads(data_raw)
+        return json.loads(data_raw).get('@graph', [])
 
     def _get_next_page(self, dom):
         try:
@@ -35,11 +38,13 @@ class LePoing(Source):
     def __call__(self, *args, min_date=None, max_date=None, **kwargs):
         data_url = URL
         while data_url:
-            body = requests.get(data_url).content.decode("utf8")
+            body = requests.get(data_url).content
             dom = html.fromstring(body)
             events = self._get_events(dom)
             data_url = self._get_next_page(dom)
             for event in events:
+                if any(key not in event for key in ('startDate', 'endDate')):
+                    continue
                 start_date = dateparser.parse(event["startDate"])
                 end_date = dateparser.parse(event["endDate"])
                 if (min_date and start_date < min_date) or (
@@ -69,6 +74,9 @@ class LePoing(Source):
                         "latitude": self.location[0],
                         "longitude": self.location[1],
                     }
+                except Exception as e:
+                    logger.debug("Exception: {event}: {e}", exc_info=True)
+                    continue
                 yield {
                     "title": event["name"],
                     "url": event["url"],

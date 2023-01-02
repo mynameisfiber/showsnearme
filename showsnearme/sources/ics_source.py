@@ -1,8 +1,13 @@
+import logging
+
 import requests
 from ics import Calendar
 
 from ..geo import clean_address, get_location
 from .source import Source
+
+
+logger = logging.getLogger(__name__)
 
 
 class ICSSource:
@@ -14,8 +19,18 @@ class ICSSource:
         self.url = url
         super().__init__(*args, **kwargs)
 
+    def _clean_content(self, content):
+        content = content.decode('utf8').replace(r'\n', ' - ').replace('\u0003', '')
+        return content
+
     def _load_events(self, min_date, max_date):
-        cal = Calendar(requests.get(self.url).content.decode("utf8"))
+        try:
+            content = requests.get(self.url).content
+            content = self._clean_content(content)
+            cal = Calendar(content)
+        except Exception as e:
+            logger.debug(f"Exception loading calendar: {self.url}: {e}", exc_info=True)
+            return []
         events = sorted(cal.events, key=lambda e: e.begin.datetime)
         if min_date or max_date:
             events = filter(

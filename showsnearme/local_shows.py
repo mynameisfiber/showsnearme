@@ -1,17 +1,20 @@
 import datetime
 import itertools
+import logging
 
 import pytz
 
 from . import geo
 from .sources import Sources
 
+logger = logging.getLogger(__name__)
+
 
 def iter_skip_execption(iter_):
     try:
         yield from iter_
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug(f"Exception: {e})", exc_info=True)
 
 
 def query_shows(
@@ -47,7 +50,9 @@ def query_shows(
     for source in sources(min_date=min_date, max_date=max_date):
         source_shows = []
         for show in iter_skip_execption(source):
+            logger.debug(f"Considering show: {show}")
             if len(source_shows) == n_shows:
+                logger.debug(f"Reached max number of shows: {n_shows}")
                 break
             venue_location = [
                 float(show["venue"].get(f) or 0.0) for f in ("latitude", "longitude")
@@ -57,20 +62,25 @@ def query_shows(
             )
             show["distance_units"] = "km" if not imperial else "mi"
             if max_distance and distance > max_distance:
+                logger.debug(f"Show is too far away: {distance} > {max_distance}")
                 continue
 
             starts_at = show["starts_at"]
             ends_at = show.get("ends_at")
             now = datetime.datetime.now(starts_at.tzinfo)
             if not passed_shows and starts_at < now:
+                logger.debug(f"Show is in the past: {starts_at} < {now}")
                 continue
 
             show["starts_at_timedelta"] = starts_at - now
             show["num_days"] = num_days = (starts_at.date() - now.date()).days
             if min_date and ends_at and ends_at < min_date:
+                logger.debug(f"Show is not within timerange: {ends_at} < {min_date}")
                 continue
             elif max_date and starts_at > max_date:
+                logger.debug(f"Show is too far in the future: {starts_at} > {max_date}")
                 break
+            logger.debug("Adding show to list")
             source_shows.append(show)
         shows.extend(source_shows)
     shows.sort(key=lambda item: (item["starts_at"], item["title"]))

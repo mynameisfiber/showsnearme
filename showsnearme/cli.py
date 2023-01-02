@@ -1,6 +1,9 @@
 import argparse
+import logging
 
 from showsnearme import display, geo, local_shows
+
+logger = logging.getLogger(__name__)
 
 parser = argparse.ArgumentParser(
     description="Find local shows",
@@ -93,7 +96,8 @@ def main():
 
     params = args.__dict__
     if args.debug:
-        print(params)
+        logging.basicConfig(level=logging.DEBUG)
+        logger.info(f"Params: {params}")
 
     shows = local_shows.query_shows(**params)
     display.print_shows(shows, **params)
