@@ -75,8 +75,10 @@ class CafeGazette(Source):
                     if min_date and starts_at < min_date:
                         continue
                     title = paragraph.find('.//strong').text.title()
+                    description = ptext[len(title):]
                     events.append({
                         "title": title,
+                        "desc": description,
                         "url": url,
                         "starts_at": starts_at,
                         "ends_at": starts_at + self.one_hour,

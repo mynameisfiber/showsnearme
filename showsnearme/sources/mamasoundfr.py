@@ -69,10 +69,12 @@ class MamaSoundFR(Source):
                 break
 
             title = event['title']
+            desc = str(event.get('price'))
             url = f"http://www.mamasound.fr/{event['_cls']}/{event['_alias']}"
             venue = self._parse_venue(event["place"])
             data = {
                 "title": title,
+                "desc": desc,
                 "url": url,
                 "starts_at": starts_at,
                 "ends_at": starts_at + self.one_hour,
