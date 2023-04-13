@@ -1,6 +1,6 @@
-from datetime import timedelta, time, datetime
 import logging
 import re
+from datetime import datetime, time, timedelta
 
 import dateparser
 import pytz
@@ -8,7 +8,6 @@ import requests
 from lxml import etree, html
 
 from .source import Source
-
 
 logger = logging.getLogger(__name__)
 URL = "https://www.gazettecafe.com/blog-feed.xml"

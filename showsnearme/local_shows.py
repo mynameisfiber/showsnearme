@@ -3,8 +3,8 @@ import itertools
 import logging
 from collections import ChainMap
 
-from slugify import slugify
 import pytz
+from slugify import slugify
 
 from . import geo
 from .sources import Sources

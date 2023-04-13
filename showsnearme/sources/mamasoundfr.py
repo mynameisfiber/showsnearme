@@ -1,7 +1,7 @@
-from datetime import timedelta, datetime
 import json
 import logging
 import re
+from datetime import datetime, timedelta
 
 import dateparser
 import pytz
@@ -9,7 +9,6 @@ import requests
 from lxml import etree
 
 from .source import Source
-
 
 logger = logging.getLogger(__name__)
 URL = "http://api.mamasound.fr/Event"

@@ -6,7 +6,6 @@ from ics import Calendar
 from ..geo import clean_address, get_location
 from .source import Source
 
-
 logger = logging.getLogger(__name__)
 
 

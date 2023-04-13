@@ -1,9 +1,10 @@
-from urllib.parse import urljoin
 import logging
+from urllib.parse import urljoin
 
 import dateparser
 import requests
 from lxml import html
+
 from showsnearme.geo import get_location
 
 logger = logging.getLogger(__name__)

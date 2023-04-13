@@ -1,7 +1,7 @@
 import json
-from urllib.parse import urljoin
-from html import unescape
 import logging
+from html import unescape
+from urllib.parse import urljoin
 
 import dateparser
 import requests
@@ -9,7 +9,6 @@ from lxml import html
 
 from ..geo import get_location
 from .source import Source
-
 
 logger = logging.getLogger(__name__)
 URL = "https://lepoing.net/evenements/"

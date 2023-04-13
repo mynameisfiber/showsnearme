@@ -2,12 +2,11 @@ import logging
 import re
 
 import chompjs
-import pytz
 import dateparser
+import pytz
 import requests
 
 from .source import Source
-
 
 logger = logging.getLogger(__name__)
 URL = "https://www.convergent.es/?Agenda"
