@@ -29,7 +29,7 @@ def query_shows(
     imperial=False,
     max_distance=None,
     debug=False,
-    **kwargs
+    **kwargs,
 ):
     now = datetime.datetime.now(pytz.utc)
     if n_start_days is not None:
@@ -56,9 +56,13 @@ def query_shows(
             if len(source_shows) == n_shows:
                 logger.debug(f"Reached max number of shows: {n_shows}")
                 break
-            venue_location = [
-                float(show["venue"].get(f) or 0.0) for f in ("latitude", "longitude")
-            ]
+            if all(f in show["venue"] for f in ("latitude", "longitude")):
+                venue_location = [
+                    float(show["venue"]["latitude"]),
+                    float(show["venue"]["longitude"]),
+                ]
+            else:
+                venue_location = source_ins.location
             distance = show["distance"] = geo.haversine(
                 location, venue_location, imperial=imperial
             )
@@ -75,7 +79,7 @@ def query_shows(
                 continue
 
             show["starts_at_timedelta"] = starts_at - now
-            show["num_days"] = num_days = (starts_at.date() - now.date()).days
+            show["num_days"] = (starts_at.date() - now.date()).days
             if min_date and ends_at and ends_at < min_date:
                 logger.debug(f"Show is not within timerange: {ends_at} < {min_date}")
                 continue
@@ -92,11 +96,11 @@ def query_shows(
 
 
 def merge_shows(shows):
-    shows = sorted(shows, key=lambda s: getattr(s['source'], 'priority', 0))
+    shows = sorted(shows, key=lambda s: getattr(s["source"], "priority", 0))
     logger.debug(f"merging: {shows}")
     return dict(ChainMap(*shows))
+
 
 def dedup_shows(shows):
     _iter = itertools.groupby(shows, lambda s: slugify(s["title"]))
     return [merge_shows(show_group) for _, show_group in _iter]
-

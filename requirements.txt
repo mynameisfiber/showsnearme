@@ -6,3 +6,4 @@ ics
 lxml
 pytz
 python-slugify
+chompjs
