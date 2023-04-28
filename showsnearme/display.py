@@ -31,18 +31,18 @@ def format_show(show, use_terminal_links=False, show_url=True, show_eta=False):
     RA = Style.RESET_ALL
     title = textwrap.shorten(show["title"], width=64, placeholder=WRAP_CHAR)
     venue_name = shorten_venue_name(show["venue"]["name"])
-    if show.get('desc'):
-        desc = textwrap.shorten(show["desc"], width=64 - len(title), placeholder=WRAP_CHAR)
+    if show.get("desc") and (desc_len := 64 - len(title)) > 0:
+        desc = textwrap.shorten(show["desc"], width=desc_len, placeholder=WRAP_CHAR)
         desc = f": {desc}"
     else:
-        desc = ''
+        desc = ""
     if use_terminal_links:
         title = term_link(show["url"], title)
         address = show["venue"]["address"].strip()
         if not address:
             address = venue_name
         venue_name = term_link(
-            f'https://www.google.com/maps/search/{address}', venue_name
+            f"https://www.google.com/maps/search/{address}", venue_name
         )
     return "".join(
         (
