@@ -38,7 +38,7 @@ def format_show(show, use_terminal_links=False, show_url=True, show_eta=False):
         desc = ""
     if use_terminal_links:
         title = term_link(show["url"], title)
-        address = show["venue"]["address"].strip()
+        address = (show["venue"]["address"] or "").strip()
         if not address:
             address = venue_name
         venue_name = term_link(
